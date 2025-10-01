@@ -31,12 +31,12 @@ function draw() {
   rect(width/4, shapeHeight, width/2);
   textSize(20);
   fill("black");
-  text('Hi! My name is Katelyn Mei', currentWidth/2, shapeHeight/2);
+  text('Hi! My name is Stephanie Liu', currentWidth/2, shapeHeight/2);
   
 
 
   // draw line for horizon
-  stroke('lavender');
+  stroke('black');
   line(0,horizon,width,horizon);
 
   //grass
