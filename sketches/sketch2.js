@@ -33,13 +33,28 @@ registerSketch('sk2', function (p) {
   let petals = 12;
   let maxPetalLength = 300;
   let maxPetalWidth = 110;
+  let hoveredPetal = -1;
 
   // Calculate mouse position relative to center
   let mx = mouseX - width / 2;
   let my = mouseY - height / 2;
+
+  for (let i = 0; i < petals; i++) {
+    let angle = (360 / petals) * i;
+    push();
+    rotate(angle);
+
+  
+    // Petal growth based on bloom cycle
+    let petalStart = i / petals;
+    let petalEnd = (i + 1) / petals;
+    let petalProgress = constrain(map(progress, petalStart, petalEnd, 0, 1), 0, 1);
+
+    let length = maxPetalLength * petalProgress;
+    let width = maxPetalWidth * petalProgress;
   
 }
 
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
-});
+}});
