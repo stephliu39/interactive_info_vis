@@ -18,6 +18,17 @@ registerSketch('sk2', function (p) {
     let bloomProgress = time24 < 12
       ? map(time24, 0, 12, 0, 1)
       : map(time24, 12, 24, 1, 0);
+
+    // Function to draw center of the flower
+    function drawCenter() {
+    noStroke();
+    for (let r = 80; r > 0; r -= 1) {
+      fill(lerpColor(color(255, 200, 0), color(255, 140, 0), r / 80));
+      ellipse(0, 0, r * 2);
+    }
+  }
+
+    
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
