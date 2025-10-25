@@ -28,7 +28,18 @@ registerSketch('sk2', function (p) {
     }
   }
 
-    
+  // Function to draw petals based on bloom progress and mouse position
+  function drawFlower(progress) {
+  let petals = 12;
+  let maxPetalLength = 300;
+  let maxPetalWidth = 110;
+
+  // Calculate mouse position relative to center
+  let mx = mouseX - width / 2;
+  let my = mouseY - height / 2;
+  
+}
+
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
