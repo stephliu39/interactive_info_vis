@@ -86,8 +86,20 @@ function drawFlower(progress) {
     let c = (i === hoveredPetal) ? highlightColor : baseColor;
     p.fill(c);
     p.noStroke();
+
+    // Draw petal shape
+    p.beginShape();
+    p.vertex(0, 0);
+    p.bezierVertex(-width * 0.4, -length * 0.3, -width * 0.5, -length * 0.9, 0, -length);
+    p.bezierVertex(width * 0.5, -length * 0.9, width * 0.4, -length * 0.3, 0, 0);
+    p.endShape(p.CLOSE);
+
+    p.pop();
+  }
+  return hoveredPetal;
 }
+
 
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
-});
+);
