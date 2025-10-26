@@ -26,11 +26,12 @@ registerSketch('sk3', function (p) {
   }
 
   p.draw = function () {
-    p.background(240, 200, 200);
-    p.fill(180, 60, 60);
-    p.textSize(32);
-    p.textAlign(p.CENTER, p.CENTER);
-    p.text('HWK #4. B', p.width / 2, p.height / 2);
+    p.background(240, 230, 220);
+    
+    // Base of incense stick
+    p.fill(90, 60, 30);
+    p.rectMode(p.CENTER);
+    p.rect(p.width / 2, baseY, 120, 10, 5);
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
