@@ -68,6 +68,13 @@ registerSketch('sk3', function (p) {
       p.ellipse(p.width / 2, tipY, 25, 25);
     }
 
+    // Draw smoke
+    for (let i = smokeParticles.length - 1; i >= 0; i--) {
+      smokeParticles[i].update();
+      smokeParticles[i].display();
+      if (smokeParticles[i].finished()) smokeParticles.splice(i, 1);
+    }
+
 
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
