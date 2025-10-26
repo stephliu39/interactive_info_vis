@@ -79,6 +79,13 @@ function drawFlower(progress) {
     if (p.abs(localX) < width * 0.4 && localY < 0 && localY > -length) {
       hoveredPetal = i;
     }
+
+    // Highlight if hovered
+    let baseColor = p.color(255, 255, 255, 230);
+    let highlightColor = p.color(255, 255, 200, 255);
+    let c = (i === hoveredPetal) ? highlightColor : baseColor;
+    p.fill(c);
+    p.noStroke();
 }
 
   };
