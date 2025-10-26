@@ -58,6 +58,17 @@ registerSketch('sk3', function (p) {
     p.rect(p.width / 2 - 4, topY, p.width / 2 + 4, baseY, 2);
     p.pop();
 
+    // Burning tip
+    if (running) {
+      let tipY = topY;
+      let fade = p.map(p.sin(p.frameCount * 0.1), -1, 1, 100, 180);
+      p.fill(255, 120, 50, fade);
+      p.ellipse(p.width / 2, tipY, 12, 12);
+      p.fill(255, 200, 80, fade / 2);
+      p.ellipse(p.width / 2, tipY, 25, 25);
+    }
+
+
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
