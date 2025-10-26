@@ -87,7 +87,39 @@ registerSketch('sk3', function (p) {
     } else {
       p.text("Enter duration (seconds) and press Start", p.width / 2, p.height - 40);
     }
-
   };
+
+  // Smoke particle class
+   class Smoke {
+    constructor(x, y) {
+      this.startX = x;
+      this.x = x;
+      this.y = y;
+      this.alpha = 200;
+      this.size = p.random(10, 20);
+      this.ySpeed = p.random(-1.0, -2.2);
+      this.life = 0;
+      this.wobbleOffset = p.random(1000); // unique sine offset
+      this.gray = p.random(150, 200);
+    }
+
+    update() {
+      this.life += 0.02;
+      this.y += this.ySpeed;
+      // horizontal drift using sine wave
+      this.x = this.startX + p.sin(this.life * 2 + this.wobbleOffset) * 15 * this.life;
+      this.alpha -= 2;
+    }
+
+    display() {
+      p.fill(this.gray, this.gray, this.gray, this.alpha);
+      p.ellipse(this.x, this.y, this.size);
+    }
+
+    finished() {
+      return this.alpha <= 0;
+    }
+  }
+
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
