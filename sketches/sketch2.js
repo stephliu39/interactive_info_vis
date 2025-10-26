@@ -99,7 +99,14 @@ function drawFlower(progress) {
   return hoveredPetal;
 }
 
+  // Function to draw the center of the flower
+  function drawCenter() {
+    p.noStroke();
+    for (let r = 80; r > 0; r -= 1) {
+      p.fill(p.lerpColor(p.color(255, 200, 0), p.color(255, 140, 0), r / 80));
+      p.ellipse(0, 0, r * 2);
+    }
 
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
-);
+});
