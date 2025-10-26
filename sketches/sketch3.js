@@ -75,6 +75,18 @@ registerSketch('sk3', function (p) {
       if (smokeParticles[i].finished()) smokeParticles.splice(i, 1);
     }
 
+    // Display timer text
+    p.fill(50);
+    if (running) {
+      let remaining = Math.max(0, totalTime - (p.millis() - startTime) / 1000);
+      p.text(
+        p.nf(Math.floor(remaining / 60), 2) + ":" + p.nf(Math.floor(remaining % 60), 2),
+        p.width / 2,
+        p.height - 40
+      );
+    } else {
+      p.text("Enter duration (seconds) and press Start", p.width / 2, p.height - 40);
+    }
 
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
