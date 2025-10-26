@@ -71,7 +71,14 @@ function drawFlower(progress) {
     let length = maxPetalLength * petalProgress;
     let width = maxPetalWidth * petalProgress;
 
-    
+    // Rotate mouse coordinates to petal space
+    let localX = mx * p.cos(-angle) - my * p.sin(-angle);
+    let localY = mx * p.sin(-angle) + my * p.cos(-angle);
+
+    // Hover detection
+    if (p.abs(localX) < width * 0.4 && localY < 0 && localY > -length) {
+      hoveredPetal = i;
+    }
 }
 
   };
