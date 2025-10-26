@@ -49,6 +49,15 @@ registerSketch('sk3', function (p) {
     } else {
       remainingLength = incenseLength;
     }
+
+    // Draw incense stick
+    let topY = baseY - remainingLength;
+    p.push();
+    p.fill(150, 70, 40);
+    p.rectMode(p.CORNERS);
+    p.rect(p.width / 2 - 4, topY, p.width / 2 + 4, baseY, 2);
+    p.pop();
+
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
