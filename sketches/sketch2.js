@@ -52,6 +52,9 @@ registerSketch('sk2', function (p) {
 
     let length = maxPetalLength * petalProgress;
     let width = maxPetalWidth * petalProgress;
+
+    // Draw center of flower
+     drawCenter();
   
 }
 
