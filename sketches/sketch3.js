@@ -27,11 +27,28 @@ registerSketch('sk3', function (p) {
 
   p.draw = function () {
     p.background(240, 230, 220);
-    
+
     // Base of incense stick
     p.fill(90, 60, 30);
     p.rectMode(p.CENTER);
     p.rect(p.width / 2, baseY, 120, 10, 5);
+
+    // Incense burning animation
+    let remainingLength;
+    if (running) {
+      let elapsed = (p.millis() - startTime) / 1000;
+      let progress = p.constrain(elapsed / totalTime, 0, 1);
+      remainingLength = incenseLength * (1 - progress);
+
+      if (p.frameCount % 5 === 0) {
+        let burnY = baseY - remainingLength;
+        smokeParticles.push(new Smoke(p.width / 2, burnY));
+      }
+
+      if (progress >= 1) running = false;
+    } else {
+      remainingLength = incenseLength;
+    }
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
