@@ -15,6 +15,16 @@ registerSketch('sk3', function (p) {
     button.position(input.x + input.width + 10, p.height + 20);
     button.mousePressed(startTimer);
   };
+
+  // Function to start the timer
+  function startTimer() {
+    totalTime = parseFloat(input.value());
+    if (isNaN(totalTime) || totalTime <= 0) return;
+    startTime = p.millis();
+    running = true;
+    smokeParticles = [];
+  }
+
   p.draw = function () {
     p.background(240, 200, 200);
     p.fill(180, 60, 60);
