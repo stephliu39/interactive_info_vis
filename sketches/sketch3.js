@@ -1,7 +1,15 @@
 // Instance-mode sketch for tab 3
 registerSketch('sk3', function (p) {
+  let totalTime = 60;
+  let startTime;
+  let running = false;
+  let input, button;
+  let incenseLength = 200;
+  let baseY;
+  let smokeParticles = [];
+
   p.setup = function () {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(16);
     p.noStroke();
@@ -9,10 +17,20 @@ registerSketch('sk3', function (p) {
     baseY = p.height / 2 + 100;
 
     input = p.createInput('60');
-    input.position(20, p.height + 20);
+    input.position(canvas.position().x + 20, canvas.position().y + p.height + 15);
+    input.style('padding', '4px');
+    input.style('font-size', '14px');
+    input.style('border-radius', '4px');
+    input.style('border', '1px solid #aaa');
 
     button = p.createButton('Start Timer');
-    button.position(input.x + input.width + 10, p.height + 20);
+    button.style('margin', '10px');
+    button.style('padding', '4px 10px');
+    button.style('font-size', '14px');
+    button.style('border-radius', '4px');
+    button.style('background-color', '#d2a679');
+    button.style('border', 'none');
+    button.style('color', 'white');
     button.mousePressed(startTimer);
   };
 
@@ -36,12 +54,12 @@ registerSketch('sk3', function (p) {
     // Incense burning animation
     let remainingLength;
     if (running) {
-      let elapsed = (p.millis() - startTime) / 1000;
-      let progress = p.constrain(elapsed / totalTime, 0, 1);
+      const elapsed = (p.millis() - startTime) / 1000;
+      const progress = p.constrain(elapsed / totalTime, 0, 1);
       remainingLength = incenseLength * (1 - progress);
 
       if (p.frameCount % 5 === 0) {
-        let burnY = baseY - remainingLength;
+        const burnY = baseY - remainingLength;
         smokeParticles.push(new Smoke(p.width / 2, burnY));
       }
 
@@ -51,7 +69,7 @@ registerSketch('sk3', function (p) {
     }
 
     // Draw incense stick
-    let topY = baseY - remainingLength;
+    const topY = baseY - remainingLength;
     p.push();
     p.fill(150, 70, 40);
     p.rectMode(p.CORNERS);
@@ -60,8 +78,8 @@ registerSketch('sk3', function (p) {
 
     // Burning tip
     if (running) {
-      let tipY = topY;
-      let fade = p.map(p.sin(p.frameCount * 0.1), -1, 1, 100, 180);
+      const tipY = topY;
+      const fade = p.map(p.sin(p.frameCount * 0.1), -1, 1, 100, 180);
       p.fill(255, 120, 50, fade);
       p.ellipse(p.width / 2, tipY, 12, 12);
       p.fill(255, 200, 80, fade / 2);
@@ -78,7 +96,7 @@ registerSketch('sk3', function (p) {
     // Display timer text
     p.fill(50);
     if (running) {
-      let remaining = Math.max(0, totalTime - (p.millis() - startTime) / 1000);
+      const remaining = Math.max(0, totalTime - (p.millis() - startTime) / 1000);
       p.text(
         p.nf(Math.floor(remaining / 60), 2) + ":" + p.nf(Math.floor(remaining % 60), 2),
         p.width / 2,
@@ -99,7 +117,7 @@ registerSketch('sk3', function (p) {
       this.size = p.random(10, 20);
       this.ySpeed = p.random(-1.0, -2.2);
       this.life = 0;
-      this.wobbleOffset = p.random(1000); // unique sine offset
+      this.wobbleOffset = p.random(1000);
       this.gray = p.random(150, 200);
     }
 
@@ -121,5 +139,7 @@ registerSketch('sk3', function (p) {
     }
   }
 
-  p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
+  p.windowResized = function () { 
+    p.resizeCanvas(p.windowWidth, p.windowHeight); 
+  };
 });
