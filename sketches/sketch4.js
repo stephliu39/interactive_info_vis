@@ -101,6 +101,17 @@ registerSketch('sk4', function (p) {
     rect(glassX, glassY, glassW, glassH, 50);
   }
 
+  // Function to draw beverage
+ function drawBeverage() {
+  let glassX = width / 2;
+  let glassW = 240;
+  let bevHeight = map(remainingTime, 0, totalTime, 0, 400);
+  let yTop = glassBottom - bevHeight;
+  noStroke();
+  let c = isWork ? color(100, 170, 255, 180) : color(150, 230, 180, 180);
+  fill(c);
+  rect(glassX, (yTop + glassBottom) / 2, glassW - 12, bevHeight, 30);
+}
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
