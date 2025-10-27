@@ -134,7 +134,7 @@ registerSketch('sk4', function (p) {
   }
 
   // Function for timer text
-  function drawTimerText() {
+  function timerText() {
     let minutes = floor(remainingTime / 60000);
     let seconds = floor((remainingTime % 60000) / 1000);
     let label = isWork ? "Focus" : "Break";
@@ -144,6 +144,71 @@ registerSketch('sk4', function (p) {
     textSize(36);
     fill(60, 60, 80, 200);
     text(`${nf(minutes, 2)}:${nf(seconds, 2)}`, width / 2, height - 100);
+  }
+
+  // Ice cube helpers
+  function createCube() {
+    return {
+      x: width / 2 + random(-90, 90),
+      y: random(glassTop + 140, glassBottom - 100),
+      size: 100,
+      offset: random(TWO_PI),
+      speed: random(0.01, 0.03),
+    };
+  }
+
+  function separateCubes() {
+    let separation = 120;
+    for (let i = 0; i < iceCubes.length; i++) {
+      for (let j = i + 1; j < iceCubes.length; j++) {
+        let a = iceCubes[i], b = iceCubes[j];
+        let d = dist(a.x, a.y, b.x, b.y);
+        if (d < separation) {
+          let angle = atan2(b.y - a.y, b.x - a.x);
+          let move = (separation - d) / 2;
+          a.x -= cos(angle) * move;
+          a.y -= sin(angle) * move;
+                  b.x += cos(angle) * move;
+          b.y += sin(angle) * move;
+        }
+      }
+    }
+  }
+
+  // Timer control functions
+  function startTimer() {
+    if (!isRunning) {
+      totalTime = int(input.value()) * 60 * 1000;
+      remainingTime = totalTime;
+      startTime = millis();
+      isRunning = true;
+    }
+  }
+
+  function startBreak() {
+    isWork = false;
+    totalTime = 5 * 60 * 1000;
+    remainingTime = totalTime;
+    startTime = millis();
+  }
+
+  function startWork() {
+    isWork = true;
+    totalTime = int(input.value()) * 60 * 1000;
+    remainingTime = totalTime;
+    startTime = millis();
+  }
+
+  function skipCycle() {
+    if (isWork) startBreak();
+    else startWork();
+  }
+  
+  function resetTimer() {
+    isRunning = false;
+    isWork = true;
+    totalTime = int(input.value()) * 60 * 1000;
+    remainingTime = totalTime;
   }
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
