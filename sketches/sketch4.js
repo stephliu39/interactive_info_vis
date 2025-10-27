@@ -1,5 +1,15 @@
 // Instance-mode sketch for tab 4
 registerSketch('sk4', function (p) {
+  let totalTime, remainingTime;
+  let isRunning = false;
+  let isWork = true;
+  let input, startButton, skipButton, resetButton;
+  let startTime;
+  let glassTop, glassBottom;
+  let numIceCubes = 5;
+  let iceCubes = [];
+  let bubbles = [];
+
   p.setup = function () {
     p.createCanvas(p.windowWidth, p.windowHeight);
   };
