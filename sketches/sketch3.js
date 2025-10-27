@@ -17,14 +17,16 @@ registerSketch('sk3', function (p) {
     baseY = p.height / 2 + 100;
 
     input = p.createInput('60');
-    input.position(canvas.position().x + 20, canvas.position().y + p.height + 15);
-    input.style('padding', '4px');
+    input.size(80);
+    input.position(canvas.position().x + p.width / 2 - 80, canvas.position().y + p.height + 10);
+    input.style('padding', '4px 10px');
     input.style('font-size', '14px');
     input.style('border-radius', '4px');
     input.style('border', '1px solid #aaa');
 
     button = p.createButton('Start Timer');
-    button.style('margin', '10px');
+    button.position(input.x + input.width + 8, input.y - 1); 
+    button.style('margin', '4 px 10px');
     button.style('padding', '4px 10px');
     button.style('font-size', '14px');
     button.style('border-radius', '4px');
