@@ -84,6 +84,14 @@ registerSketch('sk4', function (p) {
     drawBeverage();
     drawIceCubes();
     timerText();
+
+    if (isRunning) {
+      remainingTime = totalTime - (millis() - startTime);
+      if (remainingTime <= 0) {
+        if (isWork) startBreak();
+        else startWork();
+      }
+    }
   };
 
   // Function to draw background
