@@ -74,11 +74,18 @@ registerSketch('sk4', function (p) {
 
   };
   p.draw = function () {
-    p.background(200, 240, 200);
-    p.fill(30, 120, 40);
-    p.textSize(32);
-    p.textAlign(p.CENTER, p.CENTER);
-    p.text('HWK #4. C', p.width / 2, p.height / 2);
+    
   };
+
+  // Function to draw background
+  function setGradient(c1, c2) {
+    for (let y = 0; y < height; y++) {
+      let inter = map(y, 0, height, 0, 1);
+      let c = lerpColor(c1, c2, inter);
+      stroke(c);
+      line(0, y, width, y);
+    }
+  }
+
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
