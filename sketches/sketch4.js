@@ -12,6 +12,17 @@ registerSketch('sk4', function (p) {
 
   p.setup = function () {
     p.createCanvas(p.windowWidth, p.windowHeight);
+    textAlign(CENTER, CENTER);
+    rectMode(CENTER);
+    noStroke();
+    textFont('Inter, Helvetica, sans-serif');
+
+    input = createInput('25');
+    startButton = createButton('Start');
+    skipButton = createButton('Skip');
+    resetButton = createButton('Reset');
+    const buttons = [startButton, skipButton, resetButton];
+    const uiY = 40, uiCenter = width / 2;
   };
   p.draw = function () {
     p.background(200, 240, 200);
