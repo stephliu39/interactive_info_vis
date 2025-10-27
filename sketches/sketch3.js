@@ -16,7 +16,7 @@ registerSketch('sk3', function (p) {
 
     baseY = p.height / 2 + 100;
 
-    input = p.createInput('60');
+    input = p.createInput('1');
     input.size(80);
     input.position(canvas.position().x + p.width / 2 - 80, canvas.position().y + p.height + 10);
     input.style('padding', '4px 10px');
@@ -38,8 +38,9 @@ registerSketch('sk3', function (p) {
 
   // Function to start the timer
   function startTimer() {
-    totalTime = parseFloat(input.value());
-    if (isNaN(totalTime) || totalTime <= 0) return;
+    let minutes = parseFloat(input.value());
+    if (isNaN(minutes) || minutes <= 0) return;
+    totalTime = minutes * 60;
     startTime = p.millis();
     running = true;
     smokeParticles = [];
@@ -98,14 +99,16 @@ registerSketch('sk3', function (p) {
     // Display timer text
     p.fill(50);
     if (running) {
-      const remaining = Math.max(0, totalTime - (p.millis() - startTime) / 1000);
+      let remaining = Math.max(0, totalTime - (p.millis() - startTime) / 1000);
+      let mins = Math.floor(remaining / 60);
+      let secs = Math.floor(remaining % 60);
       p.text(
-        p.nf(Math.floor(remaining / 60), 2) + ":" + p.nf(Math.floor(remaining % 60), 2),
+        p.nf(mins, 2) + ":" + p.nf(secs, 2),
         p.width / 2,
-        p.height - 40
+        baseY + 40
       );
     } else {
-      p.text("Enter duration (seconds) and press Start", p.width / 2, p.height - 40);
+      p.text("Enter duration (minutes) and press Start", p.width / 2, baseY + 40);
     }
   };
 
