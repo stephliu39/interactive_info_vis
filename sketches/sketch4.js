@@ -153,6 +153,7 @@ registerSketch('sk4', function (p) {
 
   // Function for timer text
   function timerText() {
+    if (isNaN(remainingTime)) return;
     let minutes = p.floor(remainingTime / 60000);
     let seconds = p.floor((remainingTime % 60000) / 1000);
     let label = isWork ? "Focus" : "Break";
