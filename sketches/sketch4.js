@@ -96,6 +96,86 @@ registerSketch('sk4', function (p) {
     `;
   }
 
+  // Functions to draw beverage
+  function drawGlass() {
+    const topY = GLASS.cy - GLASS.h * 0.35;
+    const bottomY = GLASS.cy + GLASS.h * 0.35;
+    p.noStroke();
+    p.fill(0, 0, 0, 25);
+    p.ellipse(GLASS.cx, bottomY + 25, GLASS.w * 0.9, 25);
+    p.noStroke();
+    p.fill(255, 80);
+    p.rectMode(p.CENTER);
+    p.rect(GLASS.cx, GLASS.cy, GLASS.w, GLASS.h, GLASS.r);
+    let gradTop = topY + GLASS.h * 0.05;
+    let gradBottom = bottomY - GLASS.h * 0.1;
+
+  for (let y = gradTop; y < gradBottom; y++) {
+    let inter = p.map(y, gradTop, gradBottom, 0, 1);
+    let c = p.lerpColor(p.color("#42a4d7cc"), p.color("#8ee8ffcc"), inter);
+    if (inter > 0.8) c = p.lerpColor(c, p.color("#2b7ca1cc"), (inter - 0.8) * 2);
+    p.stroke(c);
+    p.line(GLASS.cx - GLASS.w * 0.43, y, GLASS.cx + GLASS.w * 0.43, y);
+  }
+
+  p.noStroke();
+  p.fill(255, 60);
+  p.beginShape();
+  p.vertex(GLASS.cx - GLASS.w * 0.35, gradTop + 10);
+  p.vertex(GLASS.cx - GLASS.w * 0.3, gradTop + 10);
+  p.vertex(GLASS.cx - GLASS.w * 0.3, gradBottom - 20);
+  p.vertex(GLASS.cx - GLASS.w * 0.35, gradBottom - 20);
+  p.endShape(p.CLOSE);
+  p.noStroke();
+
+  for (let i = 0; i < 25; i++) {
+    let alpha = p.map(i, 0, 25, 25, 0);
+    p.fill(0, alpha);
+    p.rect(GLASS.cx, gradBottom - i, GLASS.w * 0.85, 1);
+  }
+
+  // Function to help realistically animate ice cubes
+  for (let c of iceCubes) {
+    c.x += c.drift.vx;
+    c.y += c.drift.vy;
+    const floatY = p.sin((p.frameCount * 0.03) + c.floatOffset) * 3;
+
+    const left = GLASS.cx - GLASS.w * 0.4;
+    const right = GLASS.cx + GLASS.w * 0.4;
+    const top = gradTop;
+    const bottom = gradBottom;
+
+    if (c.x < left + c.size / 2 || c.x > right - c.size / 2) c.drift.vx *= -1;
+    if (c.y < top + c.size / 2 || c.y > bottom - c.size / 2) c.drift.vy *= -1;
+
+    let s = p.lerp(c.size, c.size * 0.3, c.meltProgress);
+    let alpha = p.lerp(220, 50, c.meltProgress);
+
+    p.push();
+    p.translate(c.x, c.y + floatY);
+    p.rotate(c.angleOffset);
+    p.fill(255, alpha);
+    p.stroke(255, 90);
+    p.strokeWeight(1);
+    p.rect(0, 0, s, s, 8);
+    p.pop();
+  }
+
+  p.noFill();
+  p.stroke(255, 120); // lower opacity for glass edge
+  p.strokeWeight(3);
+  p.rect(GLASS.cx, GLASS.cy, GLASS.w, GLASS.h, GLASS.r);
+  p.stroke(255, 70);
+  p.strokeWeight(2);
+  p.line(GLASS.cx - GLASS.w * 0.45, topY + 20, GLASS.cx - GLASS.w * 0.45, bottomY - 20);
+  p.line(GLASS.cx + GLASS.w * 0.45, topY + 20, GLASS.cx + GLASS.w * 0.45, bottomY - 20);
+  p.stroke(255, 150);
+  p.strokeWeight(2);
+  p.arc(GLASS.cx - GLASS.w / 3, GLASS.cy - GLASS.h / 3, 40, 120, p.HALF_PI, p.PI);
+}
+
+// Function to create ice cubes
+
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
