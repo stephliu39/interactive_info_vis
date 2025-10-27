@@ -3,7 +3,7 @@ registerSketch('sk4', function (p) {
   
 
   p.setup = function () {
-    
+     p.createCanvas(p.windowWidth, p.windowHeight);
   };
 
    p.draw = function () {
