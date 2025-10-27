@@ -87,5 +87,20 @@ registerSketch('sk4', function (p) {
     }
   }
 
+  // Function to draw the glass
+  function drawGlass() {
+    let glassX = width / 2;
+    let glassY = (glassTop + glassBottom) / 2;
+    let glassH = glassBottom - glassTop;
+    let glassW = 240;
+    fill(0, 0, 0, 20);
+    rect(glassX + 5, glassY + 5, glassW, glassH, 50);
+    stroke(255, 255, 255, 120);
+    strokeWeight(4);
+    fill(255, 255, 255, 60);
+    rect(glassX, glassY, glassW, glassH, 50);
+  }
+
+
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
