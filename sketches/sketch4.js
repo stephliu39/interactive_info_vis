@@ -73,8 +73,17 @@ registerSketch('sk4', function (p) {
     glassBottom = height / 2 + 200;
 
   };
+
+  // Ice cubes
+  for (let i = 0; i < numIceCubes; i++) iceCubes.push(createCube());
+  separateCubes();
+
   p.draw = function () {
-    
+    setGradient(color('#cbe4ff'), color('#eaf5ff'));
+    drawGlass();
+    drawBeverage();
+    drawIceCubes();
+    timerText();
   };
 
   // Function to draw background
@@ -203,7 +212,7 @@ registerSketch('sk4', function (p) {
     if (isWork) startBreak();
     else startWork();
   }
-  
+
   function resetTimer() {
     isRunning = false;
     isWork = true;
