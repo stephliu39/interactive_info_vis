@@ -113,5 +113,38 @@ registerSketch('sk4', function (p) {
   rect(glassX, (yTop + glassBottom) / 2, glassW - 12, bevHeight, 30);
 }
 
+  // Function to draw ice cubes
+  function drawIceCubes() {
+    for (let cube of iceCubes) {
+      let meltProgress = map(remainingTime, totalTime, 0, 1, 0);
+      let shrink = cube.size * (1 - meltProgress * 0.5);
+      let floatY = sin(frameCount * cube.speed + cube.offset) * 5;
+      let floatX = cos(frameCount * cube.speed * 0.8 + cube.offset) * 3;
+      let rot = sin(frameCount * cube.speed * 1.2 + cube.offset) * 0.1;
+
+      push();
+      translate(cube.x + floatX, cube.y + floatY);
+      rotate(rot);
+      fill(255, 255, 255, 120);
+      stroke(255, 255, 255, 220);
+      strokeWeight(2.5);
+      rect(0, 0, shrink, shrink, 10);
+      pop();
+    }
+  }
+
+  // Function for timer text
+  function drawTimerText() {
+    let minutes = floor(remainingTime / 60000);
+    let seconds = floor((remainingTime % 60000) / 1000);
+    let label = isWork ? "Focus" : "Break";
+    textSize(42);
+    fill(50, 80, 120, 220);
+    text(`${label}`, width / 2, height - 140);
+    textSize(36);
+    fill(60, 60, 80, 200);
+    text(`${nf(minutes, 2)}:${nf(seconds, 2)}`, width / 2, height - 100);
+  }
+
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
