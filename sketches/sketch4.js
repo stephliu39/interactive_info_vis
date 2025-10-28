@@ -14,8 +14,10 @@ registerSketch('sk4', function (p) {
 
 
   p.setup = function () {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    const cnv = p.createCanvas(p.windowWidth, p.windowHeight);
     p.textFont("Inter, Helvetica, Arial, sans-serif");
+    cnv.style('display', 'block');
+    cnv.style('margin', '0 auto');
     createUI();
     initIceCubes();
   };
@@ -30,16 +32,26 @@ registerSketch('sk4', function (p) {
 
    // Functions for timer UI
   function createUI() {
-    p.createP("Focus (min):").position(230, 660).style(uiLabelStyle());
-    focusInput = p.createInput("25").position(340, 657).size(60).style(uiInputStyle());
-    p.createP("Break (min):").position(440, 660).style(uiLabelStyle());
-    breakInput = p.createInput("5").position(540, 657).size(60).style(uiInputStyle());
-
-    const btnY = 710;
-    startButton = makeButton("Start", 190, btnY, toggleTimer);
-    pauseButton = makeButton("Pause", 320, btnY, togglePause);
-    resetButton = makeButton("Reset", 450, btnY, resetAll);
-    skipButton = makeButton("Skip", 580, btnY, skipCycle);
+    const baseX = 200;
+    const baseY = 820;
+    p.createP("Focus (min):")
+      .position(baseX, baseY)
+      .style('color: #333; font-weight: 500; margin:0; display:inline-block;');
+    focusInput = p.createInput("25")
+      .position(baseX + 110, baseY)
+      .size(50)
+      .style(uiInputStyle());
+    p.createP("Break (min):")
+      .position(baseX + 180, baseY)
+      .style('color: #333; font-weight: 500; margin:0; display:inline-block;');
+    breakInput = p.createInput("5")
+      .position(baseX + 290, baseY)
+      .size(50)
+      .style(uiInputStyle());
+    startButton = makeButton('Start', baseX, baseY + 50, toggleTimer);
+    pauseButton = makeButton('Pause', baseX + 100, baseY + 50, togglePause);
+    resetButton = makeButton('Reset', baseX + 200, baseY + 50, resetAll);
+    skipButton = makeButton('Skip', baseX + 300, baseY + 50, skipCycle);
   }
 
   function uiLabelStyle() {
@@ -61,47 +73,43 @@ registerSketch('sk4', function (p) {
   }
 
   function uiButtonStyle() {
-    return `
-      background: linear-gradient(135deg, #007aff, #009eff);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      width: 110px;
-      padding: 10px 0;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-    `;
-  }
+  return `
+    background-color: #007aff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
+  `;
+}
 
-  function uiButtonHoverStyle() {
-    return `
-      background: linear-gradient(135deg, #0066d1, #00a4ff);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      width: 110px;
-      padding: 10px 0;
-      font-size: 15px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      transform: translateY(-1px);
-    `;
-  }
+function uiButtonHoverStyle() {
+  return `
+    background-color: #005fcc;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  `;
+}
 
-  function uiInputStyle() {
-    return `
-      border: 2px solid #c7d3e0;
-      border-radius: 6px;
-      padding: 6px;
-      text-align: center;
-      font-size: 14px;
-      width: 50px;
-      color: #333;
-      outline: none;
-    `;
-  }
+function uiInputStyle() {
+  return `
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    padding: 6px;
+    text-align: center;
+    font-size: 14px;
+    width: 45px;
+    transition: border-color 0.2s;
+  `;
+}
 
   // Functions to draw beverage
   function drawGlass() {
