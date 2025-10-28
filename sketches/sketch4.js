@@ -283,7 +283,40 @@ function initIceCubes() {
     }
   }
 
-  
+  // Functions for timer controls
+  function toggleTimer() {
+    if (!running) {
+      running = true;
+      if (!startTime) startTime = p.millis();
+    }
+  }
+
+  function togglePause() {
+    running = !running;
+    if (running && !startTime) startTime = p.millis();
+  }
+
+  function resetAll() {
+    running = false;
+    inBreak = false;
+    startTime = null;
+    initIceCubes();
+  }
+
+  function skipCycle() {
+    if (!running) return;
+    if (!inBreak) {
+      startBreak();
+      iceCubes.forEach((c) => (c.meltProgress = 1));
+    } else {
+      inBreak = false;
+      running = false;
+      startTime = null;
+      initIceCubes();
+    }
+  }
+
+
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
