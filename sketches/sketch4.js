@@ -18,7 +18,11 @@ registerSketch('sk4', function (p) {
   };
 
    p.draw = function () {
-
+    p.background(inBreak ? "#fff6eb" : "#eaf7ff");
+    drawGlass();
+    if (inBreak) updateBreak();
+    else updateMelting();
+    drawTimeRemaining();
    }
 
    // Functions for timer UI
