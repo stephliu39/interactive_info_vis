@@ -193,7 +193,29 @@ function initIceCubes() {
     }
   }
 
-  
+  // Function to handle ice cubes overlapping for more realistic animation
+  function handleCubeCollisions() {
+    for (let i = 0; i < iceCubes.length; i++) {
+      for (let j = i + 1; j < iceCubes.length; j++) {
+        const a = iceCubes[i];
+        const b = iceCubes[j];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const minDist = (a.size + b.size) * 0.45;
+        if (dist < minDist) {
+          const overlap = (minDist - dist) / 2;
+          const nx = dx / dist;
+          const ny = dy / dist;
+          a.x -= nx * overlap;
+          a.y -= ny * overlap;
+          b.x += nx * overlap;
+          b.y += ny * overlap;
+        }
+      }
+    }
+  }
+
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
