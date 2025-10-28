@@ -175,7 +175,25 @@ registerSketch('sk4', function (p) {
 }
 
 // Function to create ice cubes
+function initIceCubes() {
+  iceCubes = [];
+  const focusMinutes = parseInt(focusInput.value());
+  const totalCubes = Math.max(1, Math.ceil(focusMinutes / 5));
 
+  for (let i = 0; i < totalCubes; i++) {
+    iceCubes.push({
+      x: GLASS.cx + p.random(-GLASS.w * 0.25, GLASS.w * 0.25),
+      y: GLASS.cy + p.random(-GLASS.h * 0.1, GLASS.h * 0.25),
+      size: 40,
+      drift: { vx: p.random(-0.4, 0.4), vy: p.random(-0.4, 0.4) },
+      floatOffset: p.random(1000),
+      angleOffset: p.random(-0.3, 0.3),
+      meltProgress: 0,
+      });
+    }
+  }
+
+  
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
