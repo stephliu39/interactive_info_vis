@@ -1,5 +1,6 @@
 // Instance-mode sketch for tab 4
 registerSketch('sk4', function (p) {
+  const GLASS = { cx: 400, cy: 350, w: 200, h: 320, r: 40 };
   let iceCubes = [];
   let running = false;
   let inBreak = false;
@@ -13,8 +14,10 @@ registerSketch('sk4', function (p) {
 
 
   p.setup = function () {
-     p.createCanvas(p.windowWidth, p.windowHeight);
-     p.textFont("Inter, Helvetica, Arial, sans-serif");
+    p.createCanvas(p.windowWidth, p.windowHeight);
+    p.textFont("Inter, Helvetica, Arial, sans-serif");
+    createUI();
+    initIceCubes();
   };
 
    p.draw = function () {
