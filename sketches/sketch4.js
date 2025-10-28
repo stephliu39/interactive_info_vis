@@ -259,6 +259,30 @@ function initIceCubes() {
     }
   }
 
+  // Functions for visual display
+  function drawTimeRemaining() {
+    p.textAlign(p.CENTER, p.CENTER);
+    p.textSize(28);
+    p.noStroke();
+
+    if (!running && !startTime) {
+      p.fill("#444");
+      p.text("Ready to start your session 🍹", 400, 600);
+    } else if (running && !inBreak) {
+      const secs = Math.floor(timeRemaining / 1000);
+      const mins = Math.floor(secs / 60);
+      const rem = secs % 60;
+      p.fill("#1a3b5d");
+      p.text(`Focus: ${mins}:${rem < 10 ? "0" + rem : rem}`, 400, 600);
+    } else if (inBreak) {
+      const secs = Math.floor(breakTimeRemaining / 1000);
+      const mins = Math.floor(secs / 60);
+      const rem = secs % 60;
+      p.fill("#d35400");
+      p.text(`Break: ${mins}:${rem < 10 ? "0" + rem : rem}`, 400, 600);
+    }
+  }
+
   
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
