@@ -216,6 +216,28 @@ function initIceCubes() {
     }
   }
 
+  // Function for melting ice cubes over time
+  function updateMelting() {
+    if (!running || !startTime) return;
+    const elapsed = p.millis() - startTime;
+    const focusMinutes = parseInt(focusInput.value());
+    const cubeDuration = 5 * 60 * 1000;
+    totalDuration = focusMinutes * 60 * 1000;
+
+    for (let i = 0; i < iceCubes.length; i++) {
+      const cubeStart = i * cubeDuration;
+      const cubeEnd = cubeStart + cubeDuration;
+      if (elapsed >= cubeEnd) {
+        iceCubes[i].meltProgress = 1;
+      } else if (elapsed >= cubeStart) {
+        iceCubes[i].meltProgress = p.map(elapsed, cubeStart, cubeEnd, 0, 1);
+      }
+    }
+
+    timeRemaining = Math.max(totalDuration - elapsed, 0);
+    if (elapsed >= totalDuration) startBreak();
+  }
+
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
