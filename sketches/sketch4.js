@@ -238,6 +238,28 @@ function initIceCubes() {
     if (elapsed >= totalDuration) startBreak();
   }
 
+  // Functions to handle break cycles
+  function startBreak() {
+    inBreak = true;
+    running = true;
+    startTime = p.millis();
+    breakTotalDuration = parseInt(breakInput.value()) * 60 * 1000;
+    breakTimeRemaining = breakTotalDuration;
+  }
+
+  function updateBreak() {
+    if (!running || !startTime) return;
+    const elapsed = p.millis() - startTime;
+    breakTimeRemaining = Math.max(breakTotalDuration - elapsed, 0);
+    if (elapsed >= breakTotalDuration) {
+      running = false;
+      inBreak = false;
+      startTime = null;
+      initIceCubes();
+    }
+  }
+
+  
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 });
