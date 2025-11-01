@@ -61,6 +61,34 @@ registerSketch('sk5', function (p) {
     btn.style("box-shadow", "0 4px 12px rgba(0,0,0,0.15)");
   }
 
+  // Function to create labeled slider
+  function createLabeledSlider(label, min, max, val, unit, x, y) {
+    const lbl = p.createP(label);
+    lbl.position(x, y - 20);
+    lbl.style("font-size", "14px");
+    lbl.style("color", "#444");
+    lbl.style("margin", "0");
+    lbl.style("font-family", "sans-serif");
+
+    const slider = p.createSlider(min, max, val);
+    slider.position(x + 220, y);
+    slider.style("width", "180px");
+    slider.style("accent-color", "#93c5fd");
+
+    const valLbl = p.createP(val + " " + unit);
+    valLbl.position(x + 420, y - 20);
+    valLbl.style("font-size", "14px");
+    valLbl.style("color", "#555");
+    valLbl.style("margin", "0");
+    valLbl.style("font-family", "sans-serif");
+
+    slider.input(() => {
+      valLbl.html(slider.value() + " " + unit);
+    });
+
+    return slider;
+  }
+
   p.draw = function () {
     
 
