@@ -41,6 +41,26 @@ registerSketch('sk5', function (p) {
     styleButton(predictBtn);
   };
 
+  function styleSelect(sel) {
+    sel.style("padding", "8px 12px");
+    sel.style("border-radius", "10px");
+    sel.style("border", "none");
+    sel.style("background", "rgba(255,255,255,0.8)");
+    sel.style("font-size", "14px");
+  }
+
+  function styleButton(btn) {
+    btn.style("padding", "12px 25px");
+    btn.style("border", "none");
+    btn.style("border-radius", "20px");
+    btn.style("background", "linear-gradient(135deg, #93c5fd, #c4b5fd)");
+    btn.style("color", "white");
+    btn.style("font-size", "16px");
+    btn.style("font-weight", "500");
+    btn.style("cursor", "pointer");
+    btn.style("box-shadow", "0 4px 12px rgba(0,0,0,0.15)");
+  }
+
   p.draw = function () {
     
 
