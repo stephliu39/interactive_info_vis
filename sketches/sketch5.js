@@ -89,6 +89,48 @@ registerSketch('sk5', function (p) {
     return slider;
   }
 
+  // Function to predict sleep quality and duration
+  function predictSleep() {
+    const gender = genderSel.value();
+    const occupation = occSel.value();
+    const age = ageSlider.value();
+    const activity = actSlider.value();
+    const stress = stressSlider.value();
+
+    let matches = [];
+    for (let r = 0; r < table.getRowCount(); r++) {
+      const g = table.getString(r, "Gender");
+      const o = table.getString(r, "Occupation");
+      const a = parseFloat(table.getString(r, "Age"));
+      const pa = parseFloat(table.getString(r, "Physical Activity Level"));
+      const st = parseFloat(table.getString(r, "Stress Level"));
+      const sq = parseFloat(table.getString(r, "Quality of Sleep"));
+      const sd = parseFloat(table.getString(r, "Sleep Duration"));
+
+      if (
+        g === gender &&
+        o === occupation &&
+        Math.abs(a - age) < 10 &&
+        Math.abs(pa - activity) < 40 &&
+        Math.abs(st - stress) < 3
+      ) {
+        matches.push({ sq, sd });
+      }
+    }
+
+    if (matches.length > 0) {
+      resultQuality = matches.reduce((sum, d) => sum + d.sq, 0) / matches.length;
+      resultDuration = matches.reduce((sum, d) => sum + d.sd, 0) / matches.length;
+    } else {
+      resultQuality = p.random(3, 7);
+      resultDuration = p.random(5, 9);
+    }
+
+    fade = 0;
+    animQuality = 0;
+    animDuration = 0;
+  }
+
   p.draw = function () {
     
 
