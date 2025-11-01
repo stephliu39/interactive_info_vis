@@ -17,22 +17,32 @@ registerSketch('sk5', function (p) {
     p.createCanvas(p.windowWidth, p.windowHeight);
     p.textAlign(p.CENTER, p.CENTER);
     p.noStroke();
+
+    genderSel = p.createSelect();
+    genderSel.position(200, 110);
+    genderSel.option("Male");
+    genderSel.option("Female");
+    genderSel.option("Other");
+    styleSelect(genderSel);
+
+    occSel = p.createSelect();
+    occSel.position(420, 110);
+    const occupations = [...new Set(table.getColumn("Occupation"))];
+    occupations.forEach((o) => occSel.option(o));
+    styleSelect(occSel);
+
+    ageSlider = createLabeledSlider("Age", 18, 80, 30, "yrs", 250, 180);
+    actSlider = createLabeledSlider("Physical Activity", 0, 180, 60, "mins/day", 250, 240);
+    stressSlider = createLabeledSlider("Stress Level", 1, 10, 5, "level", 250, 300);
+
+    predictBtn = p.createButton("Predict My Sleep");
+    predictBtn.position(330, 360);
+    predictBtn.mousePressed(predictSleep);
+    styleButton(predictBtn);
   };
 
   p.draw = function () {
-    p.background(250);
-
-    // Corner time display
-    const h = p.hour();
-    const m = p.minute();
-    const s = p.second();
-    const label = p.nf(h, 2) + ':' + p.nf(m, 2) + ':' + p.nf(s, 2);
-
-    p.noStroke();
-    p.fill(20);
-    p.textAlign(p.LEFT, p.TOP);  // change to RIGHT/BOTTOM for other corners
-    p.textSize(50);
-    p.text(label, 12, 10);   // top-left corner
+    
 
   }
 
