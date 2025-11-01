@@ -1,7 +1,22 @@
-// Example 2
+// HW5 Sketch
 registerSketch('sk5', function (p) {
+  let table;
+  let genderSel, occSel, ageSlider, actSlider, stressSlider;
+  let predictBtn;
+  let resultQuality = null;
+  let resultDuration = null;
+  let animQuality = 0;
+  let animDuration = 0;
+  let fade = 0;
+
+  p.preload = () => {
+    table = p.loadTable("Sleep_health_and_lifestyle_dataset.csv", "csv", "header");
+  };
+
   p.setup = function () {
     p.createCanvas(p.windowWidth, p.windowHeight);
+    p.textAlign(p.CENTER, p.CENTER);
+    p.noStroke();
   };
 
   p.draw = function () {
