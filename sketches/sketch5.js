@@ -153,7 +153,11 @@ registerSketch('sk5', function (p) {
     p.textSize(20);
     p.text("Predicted Sleep Profile", p.width / 2, 430);
 
+    if (resultQuality && resultDuration) {
+      fade = p.min(fade + 4, 255);
+      animQuality = p.lerp(animQuality, resultQuality, 0.08);
+      animDuration = p.lerp(animDuration, resultDuration, 0.08);
   }
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
-});
+}});
