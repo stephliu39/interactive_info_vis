@@ -139,7 +139,11 @@ registerSketch('sk5', function (p) {
       p.line(0, y, p.width, y);
     }
 
-    
+    p.noStroke();
+    p.fill(50);
+    p.textFont("sans-serif");
+    p.textSize(28);
+    p.text("Sleep Wellness Predictor", p.width / 2, 50);
 
   }
 
