@@ -132,6 +132,13 @@ registerSketch('sk5', function (p) {
   }
 
   p.draw = function () {
+    for (let y = 0; y < p.height; y++) {
+      let inter = p.map(y, 0, p.height, 0, 1);
+      let c = p.lerpColor(p.color("#e0f2fe"), p.color("#ede9fe"), inter);
+      p.stroke(c);
+      p.line(0, y, p.width, y);
+    }
+
     
 
   }
