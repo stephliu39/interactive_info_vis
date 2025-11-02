@@ -157,7 +157,25 @@ registerSketch('sk5', function (p) {
       fade = p.min(fade + 4, 255);
       animQuality = p.lerp(animQuality, resultQuality, 0.08);
       animDuration = p.lerp(animDuration, resultDuration, 0.08);
-  }
+    }
+
+    let qNorm = p.map(animQuality, 0, 10, 0, p.TWO_PI);
+    p.push();
+    p.translate(350, 570);
+    p.strokeWeight(18);
+    p.stroke(230);
+    p.noFill();
+    p.arc(0, 0, 180, 180, 0, p.TWO_PI);
+    p.stroke("#93c5fd");
+    p.arc(0, 0, 180, 180, -p.HALF_PI, -p.HALF_PI + qNorm);
+    p.noStroke();
+    p.fill(50, fade);
+    p.textSize(16);
+    p.text("Sleep Quality", 0, 70);
+    p.textSize(28);
+    p.text(animQuality.toFixed(1) + "/10", 0, 0);
+    p.pop();
+
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 }});
