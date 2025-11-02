@@ -145,6 +145,14 @@ registerSketch('sk5', function (p) {
     p.textSize(28);
     p.text("Sleep Wellness Predictor", p.width / 2, 50);
 
+    p.noStroke();
+    p.fill(255, 255, 255, 230);
+    p.rectMode(p.CENTER);
+    p.rect(p.width / 2, 580, 600, 350, 30);
+    p.fill(40);
+    p.textSize(20);
+    p.text("Predicted Sleep Profile", p.width / 2, 430);
+
   }
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
