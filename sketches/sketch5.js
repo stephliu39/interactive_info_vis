@@ -176,6 +176,24 @@ registerSketch('sk5', function (p) {
     p.text(animQuality.toFixed(1) + "/10", 0, 0);
     p.pop();
 
+    p.push();
+    p.translate(480, 700);
+    p.fill(240);
+    p.rectMode(p.CENTER);
+    p.rect(0, 0, 250, 30, 15);
+    let durWidth = p.map(animDuration, 0, 12, 0, 250);
+    p.fill("#a78bfa");
+    p.rectMode(p.CORNER);
+    p.rect(-125, -15, durWidth, 30, 15);
+    p.noStroke();
+    p.fill(50, fade);
+    p.textSize(16);
+    p.text("Sleep Duration", 0, -40);
+    p.textSize(28);
+    p.text(animDuration.toFixed(1) + " hrs", 0, 0);
+    p.pop();
+
+    
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 }});
