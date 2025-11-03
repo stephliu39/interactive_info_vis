@@ -1,4 +1,4 @@
-// HW5 Sketch
+// HW 5 Sketch
 registerSketch('sk5', function (p) {
   let table;
 
@@ -11,34 +11,70 @@ registerSketch('sk5', function (p) {
   let animQuality = 0;
   let animDuration = 0;
   let resultVisible = false;
+  // let centerX, cardW, cardLeft;
+
+  const SLIDER_GAP = 70;
+  const topTitleY = 50;
+  const outputCardH = 300;
+  const bottomMargin = 100;
+
+  const INPUT_SECTION_WIDTH = 630;
+  const LABEL_WIDTH = 180;
+  const SLIDER_WIDTH = 450;
+
+  p.sliderX = 0;
+  p.valueX = 0;
+  p.sliderY = 0;
+  p.lblX = 0;
 
   p.preload = () => {
     table = p.loadTable("Sleep_health_and_lifestyle_dataset.csv", "csv", "header");
   };
 
+  // Function to set up positioning of UI elements
+  function updatePositions() {
+    const centerX = p.width / 2;
+
+    const inputLeft = centerX - INPUT_SECTION_WIDTH / 2;
+    p.lblX = inputLeft;
+    p.sliderX = inputLeft + LABEL_WIDTH + 10;
+    p.valueX = p.sliderX + SLIDER_WIDTH + 50;
+
+    const genderW = genderSelect.width;
+    const occupationW = occupationSelect.width;
+    const dropdownGap = 20;
+    const totalDropdownW = genderW + occupationW + dropdownGap;
+    const dropdownStartX = centerX - totalDropdownW / 2;
+
+    const dropdownY = 120;
+    const dropdownH = genderSelect.height;
+    p.sliderY = dropdownY + 70;
+
+    const btnY = p.sliderY + 2 * SLIDER_GAP + ageSlider.height + 40;
+    
+    genderSelect.position(dropdownStartX, dropdownY);
+    occupationSelect.position(dropdownStartX + genderW + dropdownGap, dropdownY);
+    ageSlider.position(p.sliderX, p.sliderY);
+    activitySlider.position(p.sliderX, p.sliderY + SLIDER_GAP);
+    stressSlider.position(p.sliderX, p.sliderY + 2 * SLIDER_GAP);
+    predictBtn.position(centerX - predictBtn.width / 2, btnY);
+  }
+
   p.setup = () => {
-    p.createCanvas(800, 800);
+    p.createCanvas(p.windowWidth, p.windowHeight);
     p.textFont("Inter, sans-serif");
 
-    // Position base coordinates for top input card
-    const baseX = 100;
-    const baseY = 60;
-    const inputWidth = 600;
-
-    // Create dropdowns
-    genderSelect = createDropdown(["Male", "Female"], baseX + 60, baseY, 150);
     const occCol = table.getColumn("Occupation") || [];
-    const occSet = [...new Set(occCol.map((v) => v.trim()))];
-    occupationSelect = createDropdown(occSet, baseX + 280, baseY, 250);
+    const occSet = [...new Set(occCol.map((v) => v.trim()))]
+    
+    genderSelect = createDropdown(["Male", "Female"], 0, 0, 160);
+    occupationSelect = createDropdown(occSet, 0, 0, 200);
+    ageSlider = createSlider(0, 0, "Age", 18, 80, 30);
+    activitySlider = createSlider(0, 0, "Physical Activity Level (mins/day)", 0, 180, 60);
+    stressSlider = createSlider(0, 0, "Stress Level (1-10)", 1, 10, 5);
 
-    // Sliders
-    ageSlider = createSlider(baseX + 60, baseY + 60, "Age", 18, 80, 30);
-    activitySlider = createSlider(baseX + 60, baseY + 110, "Physical Activity (mins/day)", 0, 180, 60);
-    stressSlider = createSlider(baseX + 60, baseY + 160, "Stress Level (1-10)", 1, 10, 5);
-
-    // Predict button
     predictBtn = p.createButton("Predict Sleep");
-    predictBtn.position(baseX + 230, baseY + 210);
+    predictBtn.position(0, 0);
     predictBtn.style("padding", "10px 26px");
     predictBtn.style("border-radius", "18px");
     predictBtn.style("border", "none");
@@ -50,9 +86,11 @@ registerSketch('sk5', function (p) {
       computePrediction();
       resultVisible = true;
     });
+
+    updatePositions();
   };
 
-  // helper: dropdown
+  // Helper: dropdown
   function createDropdown(options, x, y, width = 200) {
     const sel = p.createSelect();
     sel.position(x, y);
@@ -67,11 +105,11 @@ registerSketch('sk5', function (p) {
     return sel;
   }
 
-  // helper: slider with label
+  // Helper: slider with label
   function createSlider(x, y, label, min, max, val) {
     const slider = p.createSlider(min, max, val, 1);
     slider.position(x, y + 10);
-    slider.style("width", "400px");
+    slider.style("width", SLIDER_WIDTH + "x");
     slider.attribute("label", label);
     return slider;
   }
@@ -86,7 +124,6 @@ registerSketch('sk5', function (p) {
   const activity = activitySlider.value();
   const stress = stressSlider.value();
 
-  // Store all rows that are similar enough (not necessarily identical)
   const candidates = [];
   for (let r = 0; r < table.getRowCount(); r++) {
     const g = (table.getString(r, "Gender") || "").toLowerCase().trim();
@@ -99,15 +136,13 @@ registerSketch('sk5', function (p) {
 
     if (!Number.isFinite(a) || !Number.isFinite(pa) || !Number.isFinite(st) ||
         !Number.isFinite(sd) || !Number.isFinite(sq)) continue;
-
-    // Similarity score
+    
     let score = 0;
     if (g === gender) score += 2;
     if (o === occupation) score += 2;
     score += 1 - Math.min(Math.abs(a - age) / 60, 1);
     score += 1 - Math.min(Math.abs(pa - activity) / 200, 1);
     score += 1 - Math.min(Math.abs(st - stress) / 10, 1);
-
     candidates.push({ sd, sq, score });
   }
 
@@ -119,7 +154,6 @@ registerSketch('sk5', function (p) {
     predDuration = top.reduce((sum, v) => sum + v.sd, 0) / top.length;
     predQuality = top.reduce((sum, v) => sum + v.sq, 0) / top.length;
   } else {
-    // fallback: average everything
     let totalD = 0, totalQ = 0;
     for (let r = 0; r < table.getRowCount(); r++) {
       totalD += parseFloat(table.getString(r, "Sleep Duration"));
@@ -133,55 +167,52 @@ registerSketch('sk5', function (p) {
   animDuration = p.lerp(animDuration, predDuration, 0.08);
 }
 
-
   p.draw = () => {
     p.background(245);
-    // Gradient background
     for (let y = 0; y < p.height; y++) {
       const c = p.lerpColor(p.color("#eaf3ff"), p.color("#f5eaff"), y / p.height);
       p.stroke(c);
       p.line(0, y, p.width, y);
     }
 
-    // Input Card
-    p.fill(255, 255, 255, 230);
-    p.noStroke();
-    p.rectMode(p.CENTER);
-    p.rect(p.width / 2, 160, 720, 180, 22);
-
     // Title
     p.fill(40);
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(26);
-    p.text("Sleep Wellness Predictor", p.width / 2, 40);
+    p.text("Sleep Wellness Predictor", p.width / 2, topTitleY);
 
     // Labels for sliders
     p.fill(70);
     p.textSize(14);
     p.textAlign(p.LEFT);
-    p.text("Age", 160, 95);
-    p.text("Physical Activity (mins/day)", 160, 145);
-    p.text("Stress Level (1-10)", 160, 195);
 
-    // Dynamic labels
+    const TEXT_OFFSET = 12;
+
+    p.text("Age", p.lblX, p.sliderY + TEXT_OFFSET);
+    p.text("Physical Activity (mins/day)", p.lblX, p.sliderY + TEXT_OFFSET + SLIDER_GAP);
+    p.text("Stress Level (1-10)", p.lblX, p.sliderY + TEXT_OFFSET + 2 * SLIDER_GAP);
+
     p.textAlign(p.RIGHT);
-    p.text(`${ageSlider.value()} yrs`, 630, 95);
-    p.text(`${activitySlider.value()} mins`, 630, 145);
-    p.text(`${stressSlider.value()} lvl`, 630, 195);
+    p.text(`${ageSlider.value()} yrs`, p.valueX, p.sliderY + TEXT_OFFSET);
+    p.text(`${activitySlider.value()} mins`, p.valueX, p.sliderY + TEXT_OFFSET + SLIDER_GAP);
+    p.text(`${stressSlider.value()} lvl`, p.valueX, p.sliderY + TEXT_OFFSET + 2 * SLIDER_GAP);
 
     // Prediction Card
     const cx = p.width / 2;
-    const cy = 520;
-    const cardW = 720;
-    const cardH = 300;
+    const cardW2 = 720;
+    const cy = p.height - outputCardH / 2 - bottomMargin;
 
-    p.fill(255, 255, 255, 245);
-    p.rect(cx, cy, cardW, cardH, 22);
+    p.noStroke();
+    p.fill(255, 255, 255, 200);
+    p.rectMode(p.CENTER);
+    p.rect(cx, cy, cardW2, outputCardH, 22);
+    p.fill(255, 255, 255, 40);
+    p.rect(cx, cy, cardW2 * 0.95, outputCardH * 0.95, 18);
 
     p.fill(30);
     p.textAlign(p.CENTER);
     p.textSize(20);
-    p.text("Predicted Sleep Profile", cx, cy - cardH / 2 + 35);
+    p.text("Predicted Sleep Profile", cx, cy - outputCardH / 2 + 35);
 
     if (!resultVisible || predQuality === null || predDuration === null) {
       p.fill(90);
@@ -231,6 +262,10 @@ registerSketch('sk5', function (p) {
     p.textSize(14);
     p.fill(90);
     p.text("Sleep Duration", dX, dY + 40);
-  
-  p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
-}});
+  };
+
+p.windowResized = function () {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+    updatePositions();
+  };
+});
