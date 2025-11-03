@@ -1,199 +1,236 @@
 // HW5 Sketch
 registerSketch('sk5', function (p) {
   let table;
-  let genderSel, occSel, ageSlider, actSlider, stressSlider;
+
+  let genderSelect, occupationSelect;
+  let ageSlider, activitySlider, stressSlider;
   let predictBtn;
-  let resultQuality = null;
-  let resultDuration = null;
+
+  let predQuality = null;
+  let predDuration = null;
   let animQuality = 0;
   let animDuration = 0;
-  let fade = 0;
+  let resultVisible = false;
 
   p.preload = () => {
     table = p.loadTable("Sleep_health_and_lifestyle_dataset.csv", "csv", "header");
   };
 
-  p.setup = function () {
-    p.createCanvas(p.windowWidth, p.windowHeight);
-    p.textAlign(p.CENTER, p.CENTER);
-    p.noStroke();
+  p.setup = () => {
+    p.createCanvas(800, 800);
+    p.textFont("Inter, sans-serif");
 
-    genderSel = p.createSelect();
-    genderSel.position(200, 110);
-    genderSel.option("Male");
-    genderSel.option("Female");
-    genderSel.option("Other");
-    styleSelect(genderSel);
+    // Position base coordinates for top input card
+    const baseX = 100;
+    const baseY = 60;
+    const inputWidth = 600;
 
-    occSel = p.createSelect();
-    occSel.position(420, 110);
-    const occupations = [...new Set(table.getColumn("Occupation"))];
-    occupations.forEach((o) => occSel.option(o));
-    styleSelect(occSel);
+    // Create dropdowns
+    genderSelect = createDropdown(["Male", "Female"], baseX + 60, baseY, 150);
+    const occCol = table.getColumn("Occupation") || [];
+    const occSet = [...new Set(occCol.map((v) => v.trim()))];
+    occupationSelect = createDropdown(occSet, baseX + 280, baseY, 250);
 
-    ageSlider = createLabeledSlider("Age", 18, 80, 30, "yrs", 250, 180);
-    actSlider = createLabeledSlider("Physical Activity", 0, 180, 60, "mins/day", 250, 240);
-    stressSlider = createLabeledSlider("Stress Level", 1, 10, 5, "level", 250, 300);
+    // Sliders
+    ageSlider = createSlider(baseX + 60, baseY + 60, "Age", 18, 80, 30);
+    activitySlider = createSlider(baseX + 60, baseY + 110, "Physical Activity (mins/day)", 0, 180, 60);
+    stressSlider = createSlider(baseX + 60, baseY + 160, "Stress Level (1-10)", 1, 10, 5);
 
-    predictBtn = p.createButton("Predict My Sleep");
-    predictBtn.position(330, 360);
-    predictBtn.mousePressed(predictSleep);
-    styleButton(predictBtn);
+    // Predict button
+    predictBtn = p.createButton("Predict Sleep");
+    predictBtn.position(baseX + 230, baseY + 210);
+    predictBtn.style("padding", "10px 26px");
+    predictBtn.style("border-radius", "18px");
+    predictBtn.style("border", "none");
+    predictBtn.style("background", "linear-gradient(135deg,#9bbef9,#b59ef7)");
+    predictBtn.style("color", "white");
+    predictBtn.style("font-weight", "600");
+    predictBtn.style("box-shadow", "0 4px 10px rgba(0,0,0,0.15)");
+    predictBtn.mousePressed(() => {
+      computePrediction();
+      resultVisible = true;
+    });
   };
 
-  function styleSelect(sel) {
+  // helper: dropdown
+  function createDropdown(options, x, y, width = 200) {
+    const sel = p.createSelect();
+    sel.position(x, y);
     sel.style("padding", "8px 12px");
     sel.style("border-radius", "10px");
     sel.style("border", "none");
-    sel.style("background", "rgba(255,255,255,0.8)");
+    sel.style("background", "white");
     sel.style("font-size", "14px");
+    sel.style("box-shadow", "0 3px 12px rgba(40,60,120,0.1)");
+    sel.style("width", width + "px");
+    options.forEach((o) => sel.option(o));
+    return sel;
   }
 
-  function styleButton(btn) {
-    btn.style("padding", "12px 25px");
-    btn.style("border", "none");
-    btn.style("border-radius", "20px");
-    btn.style("background", "linear-gradient(135deg, #93c5fd, #c4b5fd)");
-    btn.style("color", "white");
-    btn.style("font-size", "16px");
-    btn.style("font-weight", "500");
-    btn.style("cursor", "pointer");
-    btn.style("box-shadow", "0 4px 12px rgba(0,0,0,0.15)");
-  }
-
-  // Function to create labeled slider
-  function createLabeledSlider(label, min, max, val, unit, x, y) {
-    const lbl = p.createP(label);
-    lbl.position(x, y - 20);
-    lbl.style("font-size", "14px");
-    lbl.style("color", "#444");
-    lbl.style("margin", "0");
-    lbl.style("font-family", "sans-serif");
-
-    const slider = p.createSlider(min, max, val);
-    slider.position(x + 220, y);
-    slider.style("width", "180px");
-    slider.style("accent-color", "#93c5fd");
-
-    const valLbl = p.createP(val + " " + unit);
-    valLbl.position(x + 420, y - 20);
-    valLbl.style("font-size", "14px");
-    valLbl.style("color", "#555");
-    valLbl.style("margin", "0");
-    valLbl.style("font-family", "sans-serif");
-
-    slider.input(() => {
-      valLbl.html(slider.value() + " " + unit);
-    });
-
+  // helper: slider with label
+  function createSlider(x, y, label, min, max, val) {
+    const slider = p.createSlider(min, max, val, 1);
+    slider.position(x, y + 10);
+    slider.style("width", "400px");
+    slider.attribute("label", label);
     return slider;
   }
 
-  // Function to predict sleep quality and duration
-  function predictSleep() {
-    const gender = genderSel.value();
-    const occupation = occSel.value();
-    const age = ageSlider.value();
-    const activity = actSlider.value();
-    const stress = stressSlider.value();
+  // Function to compute prediction based on user input
+  function computePrediction() {
+  if (!table) return;
 
-    let matches = [];
-    for (let r = 0; r < table.getRowCount(); r++) {
-      const g = table.getString(r, "Gender");
-      const o = table.getString(r, "Occupation");
-      const a = parseFloat(table.getString(r, "Age"));
-      const pa = parseFloat(table.getString(r, "Physical Activity Level"));
-      const st = parseFloat(table.getString(r, "Stress Level"));
-      const sq = parseFloat(table.getString(r, "Quality of Sleep"));
-      const sd = parseFloat(table.getString(r, "Sleep Duration"));
+  const gender = genderSelect.value().toLowerCase().trim();
+  const occupation = occupationSelect.value().toLowerCase().trim();
+  const age = ageSlider.value();
+  const activity = activitySlider.value();
+  const stress = stressSlider.value();
 
-      if (
-        g === gender &&
-        o === occupation &&
-        Math.abs(a - age) < 10 &&
-        Math.abs(pa - activity) < 40 &&
-        Math.abs(st - stress) < 3
-      ) {
-        matches.push({ sq, sd });
-      }
-    }
+  // Store all rows that are similar enough (not necessarily identical)
+  const candidates = [];
+  for (let r = 0; r < table.getRowCount(); r++) {
+    const g = (table.getString(r, "Gender") || "").toLowerCase().trim();
+    const o = (table.getString(r, "Occupation") || "").toLowerCase().trim();
+    const a = parseFloat(table.getString(r, "Age"));
+    const pa = parseFloat(table.getString(r, "Physical Activity Level"));
+    const st = parseFloat(table.getString(r, "Stress Level"));
+    const sd = parseFloat(table.getString(r, "Sleep Duration"));
+    const sq = parseFloat(table.getString(r, "Quality of Sleep"));
 
-    if (matches.length > 0) {
-      resultQuality = matches.reduce((sum, d) => sum + d.sq, 0) / matches.length;
-      resultDuration = matches.reduce((sum, d) => sum + d.sd, 0) / matches.length;
-    } else {
-      resultQuality = p.random(3, 7);
-      resultDuration = p.random(5, 9);
-    }
+    if (!Number.isFinite(a) || !Number.isFinite(pa) || !Number.isFinite(st) ||
+        !Number.isFinite(sd) || !Number.isFinite(sq)) continue;
 
-    fade = 0;
-    animQuality = 0;
-    animDuration = 0;
+    // Similarity score
+    let score = 0;
+    if (g === gender) score += 2;
+    if (o === occupation) score += 2;
+    score += 1 - Math.min(Math.abs(a - age) / 60, 1);
+    score += 1 - Math.min(Math.abs(pa - activity) / 200, 1);
+    score += 1 - Math.min(Math.abs(st - stress) / 10, 1);
+
+    candidates.push({ sd, sq, score });
   }
 
-  p.draw = function () {
+  // Sort by similarity and pick top 10%
+  candidates.sort((a, b) => b.score - a.score);
+  const top = candidates.slice(0, Math.max(5, Math.floor(candidates.length * 0.1)));
+
+  if (top.length > 0) {
+    predDuration = top.reduce((sum, v) => sum + v.sd, 0) / top.length;
+    predQuality = top.reduce((sum, v) => sum + v.sq, 0) / top.length;
+  } else {
+    // fallback: average everything
+    let totalD = 0, totalQ = 0;
+    for (let r = 0; r < table.getRowCount(); r++) {
+      totalD += parseFloat(table.getString(r, "Sleep Duration"));
+      totalQ += parseFloat(table.getString(r, "Quality of Sleep"));
+    }
+    predDuration = totalD / table.getRowCount();
+    predQuality = totalQ / table.getRowCount();
+  }
+
+  animQuality = p.lerp(animQuality, predQuality, 0.08);
+  animDuration = p.lerp(animDuration, predDuration, 0.08);
+}
+
+
+  p.draw = () => {
+    p.background(245);
+    // Gradient background
     for (let y = 0; y < p.height; y++) {
-      let inter = p.map(y, 0, p.height, 0, 1);
-      let c = p.lerpColor(p.color("#e0f2fe"), p.color("#ede9fe"), inter);
+      const c = p.lerpColor(p.color("#eaf3ff"), p.color("#f5eaff"), y / p.height);
       p.stroke(c);
       p.line(0, y, p.width, y);
     }
 
-    p.noStroke();
-    p.fill(50);
-    p.textFont("sans-serif");
-    p.textSize(28);
-    p.text("Sleep Wellness Predictor", p.width / 2, 50);
-
-    p.noStroke();
+    // Input Card
     p.fill(255, 255, 255, 230);
+    p.noStroke();
     p.rectMode(p.CENTER);
-    p.rect(p.width / 2, 580, 600, 350, 30);
-    p.fill(40);
-    p.textSize(20);
-    p.text("Predicted Sleep Profile", p.width / 2, 430);
+    p.rect(p.width / 2, 160, 720, 180, 22);
 
-    if (resultQuality && resultDuration) {
-      fade = p.min(fade + 4, 255);
-      animQuality = p.lerp(animQuality, resultQuality, 0.08);
-      animDuration = p.lerp(animDuration, resultDuration, 0.08);
+    // Title
+    p.fill(40);
+    p.textAlign(p.CENTER, p.CENTER);
+    p.textSize(26);
+    p.text("Sleep Wellness Predictor", p.width / 2, 40);
+
+    // Labels for sliders
+    p.fill(70);
+    p.textSize(14);
+    p.textAlign(p.LEFT);
+    p.text("Age", 160, 95);
+    p.text("Physical Activity (mins/day)", 160, 145);
+    p.text("Stress Level (1-10)", 160, 195);
+
+    // Dynamic labels
+    p.textAlign(p.RIGHT);
+    p.text(`${ageSlider.value()} yrs`, 630, 95);
+    p.text(`${activitySlider.value()} mins`, 630, 145);
+    p.text(`${stressSlider.value()} lvl`, 630, 195);
+
+    // Prediction Card
+    const cx = p.width / 2;
+    const cy = 520;
+    const cardW = 720;
+    const cardH = 300;
+
+    p.fill(255, 255, 255, 245);
+    p.rect(cx, cy, cardW, cardH, 22);
+
+    p.fill(30);
+    p.textAlign(p.CENTER);
+    p.textSize(20);
+    p.text("Predicted Sleep Profile", cx, cy - cardH / 2 + 35);
+
+    if (!resultVisible || predQuality === null || predDuration === null) {
+      p.fill(90);
+      p.textSize(15);
+      p.text(
+        "Enter your details above and click 'Predict Sleep' to compute your predicted sleep duration and quality.",
+        cx,
+        cy
+      );
+      return;
     }
 
-    let qNorm = p.map(animQuality, 0, 10, 0, p.TWO_PI);
-    p.push();
-    p.translate(350, 570);
-    p.strokeWeight(18);
-    p.stroke(230);
-    p.noFill();
-    p.arc(0, 0, 180, 180, 0, p.TWO_PI);
-    p.stroke("#93c5fd");
-    p.arc(0, 0, 180, 180, -p.HALF_PI, -p.HALF_PI + qNorm);
-    p.noStroke();
-    p.fill(50, fade);
-    p.textSize(16);
-    p.text("Sleep Quality", 0, 70);
-    p.textSize(28);
-    p.text(animQuality.toFixed(1) + "/10", 0, 0);
-    p.pop();
+    animQuality = p.lerp(animQuality, predQuality, 0.08);
+    animDuration = p.lerp(animDuration, predDuration, 0.08);
 
-    p.push();
-    p.translate(480, 700);
+    // Sleep Quality gauge
+    const qX = cx - 180;
+    const qY = cy + 20;
+    p.strokeWeight(18);
+    p.noFill();
+    p.stroke(230);
+    p.arc(qX, qY, 180, 180, 0, p.TWO_PI);
+    p.stroke("#82b5ff");
+    p.arc(qX, qY, 180, 180, -p.HALF_PI, -p.HALF_PI + p.map(animQuality, 0, 10, 0, p.TWO_PI));
+    p.noStroke();
+    p.fill(40);
+    p.textSize(24);
+    p.textAlign(p.CENTER);
+    p.text(animQuality.toFixed(1) + "/10", qX, qY);
+    p.textSize(14);
+    p.fill(90);
+    p.text("Sleep Quality", qX, qY + 60);
+
+    // Sleep Duration bar
+    const dX = cx + 160;
+    const dY = cy + 20;
     p.fill(240);
     p.rectMode(p.CENTER);
-    p.rect(0, 0, 250, 30, 15);
-    let durWidth = p.map(animDuration, 0, 12, 0, 250);
-    p.fill("#a78bfa");
+    p.rect(dX, dY, 280, 24, 12);
+    p.fill("#c1a4ff");
     p.rectMode(p.CORNER);
-    p.rect(-125, -15, durWidth, 30, 15);
-    p.noStroke();
-    p.fill(50, fade);
-    p.textSize(16);
-    p.text("Sleep Duration", 0, -40);
-    p.textSize(28);
-    p.text(animDuration.toFixed(1) + " hrs", 0, 0);
-    p.pop();
-
-    
-
+    p.rect(dX - 140, dY - 12, p.map(animDuration, 0, 12, 0, 280), 24, 12);
+    p.textAlign(p.CENTER);
+    p.fill(40);
+    p.textSize(22);
+    p.text(animDuration.toFixed(1) + " hrs", dX, dY - 30);
+    p.textSize(14);
+    p.fill(90);
+    p.text("Sleep Duration", dX, dY + 40);
+  
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 }});
