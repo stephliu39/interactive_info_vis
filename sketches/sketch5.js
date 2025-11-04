@@ -11,16 +11,18 @@ registerSketch('sk5', function (p) {
   let animQuality = 0;
   let animDuration = 0;
   let resultVisible = false;
-  // let centerX, cardW, cardLeft;
 
-  const SLIDER_GAP = 70;
+  const sliderGap = 70;
   const topTitleY = 50;
   const outputCardH = 300;
   const bottomMargin = 100;
 
-  const INPUT_SECTION_WIDTH = 630;
-  const LABEL_WIDTH = 180;
-  const SLIDER_WIDTH = 450;
+  const labelWidth = 180;
+  const sliderWidth = 380;
+  const valueWidth = 60;
+  const labelGap = 10;
+  const valueGap = 10;
+  const INPUT_SECTION_WIDTH = labelWidth + labelGap + sliderWidth + valueGap + valueWidth;
 
   p.sliderX = 0;
   p.valueX = 0;
@@ -37,8 +39,8 @@ registerSketch('sk5', function (p) {
 
     const inputLeft = centerX - INPUT_SECTION_WIDTH / 2;
     p.lblX = inputLeft;
-    p.sliderX = inputLeft + LABEL_WIDTH + 10;
-    p.valueX = p.sliderX + SLIDER_WIDTH + 50;
+    p.sliderX = inputLeft + labelWidth + labelGap;
+    p.valueX = p.sliderX + sliderWidth + valueGap;
 
     const genderW = genderSelect.width;
     const occupationW = occupationSelect.width;
@@ -46,17 +48,31 @@ registerSketch('sk5', function (p) {
     const totalDropdownW = genderW + occupationW + dropdownGap;
     const dropdownStartX = centerX - totalDropdownW / 2;
 
-    const dropdownY = 120;
-    const dropdownH = genderSelect.height;
-    p.sliderY = dropdownY + 70;
+    const outputCardTopY = p.height - outputCardH - bottomMargin;
+    const height = outputCardTopY - topTitleY;
 
-    const btnY = p.sliderY + 2 * SLIDER_GAP + ageSlider.height + 40;
+    const dropdownH = genderSelect.height;
+    const sliderH = ageSlider.height;
+    const btnH = predictBtn.height;
+    const margin1 = 40;
+    const margin2 = 40;
+    const totalInputHeight = dropdownH + margin1 + (2 * sliderGap) + sliderH + margin2 + btnH;
+
+    let dropdownY;
+    if (totalInputHeight < height) {
+      dropdownY = topTitleY + 20;
+    } else {
+      dropdownY = topTitleY + (height - totalInputHeight) / 2;
+    }
+
+    p.sliderY = dropdownY + dropdownH + margin1;
+    const btnY = p.sliderY + (2 * sliderGap) + sliderH + margin2;
     
     genderSelect.position(dropdownStartX, dropdownY);
     occupationSelect.position(dropdownStartX + genderW + dropdownGap, dropdownY);
     ageSlider.position(p.sliderX, p.sliderY);
-    activitySlider.position(p.sliderX, p.sliderY + SLIDER_GAP);
-    stressSlider.position(p.sliderX, p.sliderY + 2 * SLIDER_GAP);
+    activitySlider.position(p.sliderX, p.sliderY + sliderGap);
+    stressSlider.position(p.sliderX, p.sliderY + 2 * sliderGap);
     predictBtn.position(centerX - predictBtn.width / 2, btnY);
   }
 
@@ -109,7 +125,7 @@ registerSketch('sk5', function (p) {
   function createSlider(x, y, label, min, max, val) {
     const slider = p.createSlider(min, max, val, 1);
     slider.position(x, y + 10);
-    slider.style("width", SLIDER_WIDTH + "x");
+    slider.style("width", sliderWidth + "px");
     slider.attribute("label", label);
     return slider;
   }
@@ -189,13 +205,13 @@ registerSketch('sk5', function (p) {
     const TEXT_OFFSET = 12;
 
     p.text("Age", p.lblX, p.sliderY + TEXT_OFFSET);
-    p.text("Physical Activity (mins/day)", p.lblX, p.sliderY + TEXT_OFFSET + SLIDER_GAP);
-    p.text("Stress Level (1-10)", p.lblX, p.sliderY + TEXT_OFFSET + 2 * SLIDER_GAP);
+    p.text("Physical Activity (mins/day)", p.lblX, p.sliderY + TEXT_OFFSET + sliderGap);
+    p.text("Stress Level (1-10)", p.lblX, p.sliderY + TEXT_OFFSET + 2 * sliderGap);
 
     p.textAlign(p.RIGHT);
     p.text(`${ageSlider.value()} yrs`, p.valueX, p.sliderY + TEXT_OFFSET);
-    p.text(`${activitySlider.value()} mins`, p.valueX, p.sliderY + TEXT_OFFSET + SLIDER_GAP);
-    p.text(`${stressSlider.value()} lvl`, p.valueX, p.sliderY + TEXT_OFFSET + 2 * SLIDER_GAP);
+    p.text(`${activitySlider.value()} mins`, p.valueX, p.sliderY + TEXT_OFFSET + sliderGap);
+    p.text(`${stressSlider.value()} lvl`, p.valueX, p.sliderY + TEXT_OFFSET + 2 * sliderGap);
 
     // Prediction Card
     const cx = p.width / 2;
@@ -207,7 +223,7 @@ registerSketch('sk5', function (p) {
     p.rectMode(p.CENTER);
     p.rect(cx, cy, cardW2, outputCardH, 22);
     p.fill(255, 255, 255, 40);
-    p.rect(cx, cy, cardW2 * 0.95, outputCardH * 0.95, 18);
+    p.rect(cx, cy - 10, cardW2 * 0.95, outputCardH * 0.95, 18);
 
     p.fill(30);
     p.textAlign(p.CENTER);
