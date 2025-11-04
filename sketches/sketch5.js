@@ -15,7 +15,6 @@ registerSketch('sk5', function (p) {
   const sliderGap = 70;
   const topTitleY = 50;
   const outputCardH = 300;
-  const bottomMargin = 100;
 
   const labelWidth = 180;
   const sliderWidth = 380;
@@ -40,7 +39,7 @@ registerSketch('sk5', function (p) {
     const inputLeft = centerX - INPUT_SECTION_WIDTH / 2;
     p.lblX = inputLeft;
     p.sliderX = inputLeft + labelWidth + labelGap;
-    p.valueX = p.sliderX + sliderWidth + valueGap;
+    p.valueX = inputLeft + INPUT_SECTION_WIDTH;;
 
     const genderW = genderSelect.width;
     const occupationW = occupationSelect.width;
@@ -48,8 +47,8 @@ registerSketch('sk5', function (p) {
     const totalDropdownW = genderW + occupationW + dropdownGap;
     const dropdownStartX = centerX - totalDropdownW / 2;
 
-    const outputCardTopY = p.height - outputCardH - bottomMargin;
-    const height = outputCardTopY - topTitleY;
+    const outputCardTopY = p.height - outputCardH
+    const availableHeight = outputCardTopY - topTitleY;
 
     const dropdownH = genderSelect.height;
     const sliderH = ageSlider.height;
@@ -59,10 +58,10 @@ registerSketch('sk5', function (p) {
     const totalInputHeight = dropdownH + margin1 + (2 * sliderGap) + sliderH + margin2 + btnH;
 
     let dropdownY;
-    if (totalInputHeight < height) {
-      dropdownY = topTitleY + 20;
+    if (totalInputHeight < availableHeight) {
+      dropdownY = topTitleY + (availableHeight - totalInputHeight) / 2;
     } else {
-      dropdownY = topTitleY + (height - totalInputHeight) / 2;
+      dropdownY = topTitleY + 40;
     }
 
     p.sliderY = dropdownY + dropdownH + margin1;
@@ -70,9 +69,9 @@ registerSketch('sk5', function (p) {
     
     genderSelect.position(dropdownStartX, dropdownY);
     occupationSelect.position(dropdownStartX + genderW + dropdownGap, dropdownY);
-    ageSlider.position(p.sliderX, p.sliderY);
-    activitySlider.position(p.sliderX, p.sliderY + sliderGap);
-    stressSlider.position(p.sliderX, p.sliderY + 2 * sliderGap);
+    ageSlider.position(p.sliderX, p.sliderY + 10);
+    activitySlider.position(p.sliderX, p.sliderY + 10 + sliderGap);
+    stressSlider.position(p.sliderX, p.sliderY + 10 + 2 * sliderGap);
     predictBtn.position(centerX - predictBtn.width / 2, btnY);
   }
 
@@ -200,15 +199,15 @@ registerSketch('sk5', function (p) {
     // Labels for sliders
     p.fill(70);
     p.textSize(14);
-    p.textAlign(p.LEFT);
 
-    const TEXT_OFFSET = 12;
+    const TEXT_OFFSET = -5;
 
+    p.textAlign(p.LEFT, p.CENTER);
     p.text("Age", p.lblX, p.sliderY + TEXT_OFFSET);
-    p.text("Physical Activity (mins/day)", p.lblX, p.sliderY + TEXT_OFFSET + sliderGap);
-    p.text("Stress Level (1-10)", p.lblX, p.sliderY + TEXT_OFFSET + 2 * sliderGap);
+    p.text(activitySlider.attribute("label"), p.lblX, p.sliderY + TEXT_OFFSET + sliderGap);
+    p.text(stressSlider.attribute("label"), p.lblX, p.sliderY + TEXT_OFFSET + 2 * sliderGap);
 
-    p.textAlign(p.RIGHT);
+    p.textAlign(p.RIGHT, p.CENTER);
     p.text(`${ageSlider.value()} yrs`, p.valueX, p.sliderY + TEXT_OFFSET);
     p.text(`${activitySlider.value()} mins`, p.valueX, p.sliderY + TEXT_OFFSET + sliderGap);
     p.text(`${stressSlider.value()} lvl`, p.valueX, p.sliderY + TEXT_OFFSET + 2 * sliderGap);
@@ -216,7 +215,7 @@ registerSketch('sk5', function (p) {
     // Prediction Card
     const cx = p.width / 2;
     const cardW2 = 720;
-    const cy = p.height - outputCardH / 2 - bottomMargin;
+    const cy = 520;
 
     p.noStroke();
     p.fill(255, 255, 255, 200);
